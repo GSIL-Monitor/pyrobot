@@ -143,7 +143,10 @@ if __name__ == "__main__":
 
     msg="Hello,你好\nI've got some command:\n\n"
     cmd=m.getcmd()
-    msg+='\n'.join(cmd)
+    if msg:
+        msg+='<ul><li>'
+        msg+='</li><li>'.join(cmd)
+        msg+='</li></ul>'
     msg+='\n\n PyRobot 正在全力运行...\n'
     #print(msg)
     #m.sendtext(msg)
