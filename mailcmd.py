@@ -17,12 +17,14 @@ class mailcmd:
         self.smtp_port = smtp_port
         self.account = account
         self.password = password
+        self.flag = ''
     
-    def getcmd(self):
+    def getcmd(self,flag="UNSEEN"):
         """
         Get command from mail
         """
 
+        self.flag = flag
         M = imaplib.IMAP4_SSL(self.imap_server,self.imap_port)
         sublist =[]
         try:
@@ -38,7 +40,7 @@ class mailcmd:
             i=0
     
             # result, message = M.select()
-            res, data = M.search(None, 'ALL')
+            res, data = M.search(None, self.flag)
             for num in data[0].decode().split():
                 try:
                     res, data = M.fetch(num, '(RFC822)')
@@ -105,8 +107,8 @@ class mailcmd:
         msg['To']=",".join(to_addr)
         
         html1 = ('<html><head><style type="text/css">'
-            'table.gridtable{color:#333333;border-width:1px;border-style:solid;'
-            'border-color:#666666;border-collapse:collapse;margin:auto}'
+                'table.gridtable{color:#333333;border-width:1px;border-style:solid;width:100%;'
+            'border-color:#666666;border-collapse:collapse;margin:0 auto}'
             'table.gridtable th{color:#0000a0;font-size:14px;padding: 10px;background-color:#dedede;}'
             'table.gridtable td{font-size:16px;text-align:left;padding:14px;background-color:#ffffff;}'
             '</style></head><body><center><div align="center";style="text-align:center;width:400px"><br><br>'
@@ -141,14 +143,12 @@ if __name__ == "__main__":
             'smtp.exmail.qq.com','465',
             'robot@ziwu.net','qdlzxkgk8G')
 
-    msg="Hello,你好\nI've got some command:\n\n"
-    cmd=m.getcmd()
-    if msg:
-        msg+='<ul><li>'
-        msg+='</li><li>'.join(cmd)
-        msg+='</li></ul>'
-    msg+='\n\n PyRobot 正在全力运行...\n'
-    #print(msg)
-    #m.sendtext(msg)
-    m.sendhtml(msg)
+    #cmd=m.getcmd()
+    cmd=m.getcmd('ALL')
+    if cmd:
+        msg="Hello,你好\nI've got some command:\n\n"
+        msg+='<ul><li>'+'</li><li>'.join(cmd)+'</li></ul>'
+        msg+='\n\n PyRobot 正在全力运行...\n'
+        #m.sendtext(msg)
+        m.sendhtml(msg)
     print( "Done!" )
