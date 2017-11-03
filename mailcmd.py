@@ -58,7 +58,7 @@ class mailcmd:
                     sublist.append(str)
                 except Exception as e:
                     print( 'got msg error: %s' % e)            
-            ts=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime())
+            ts=time.strftime("%Y-%m-%d %H:%M:%S",time.gmtime(time.time()+28800))
             print( "%s get %d command from mail." %(ts, i))
             #for i in range(len(sublist)):
             #    print(i+1,sublist[i])
@@ -74,7 +74,7 @@ class mailcmd:
         """
         Send message back
         """
-        ts=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime())
+        ts=time.strftime("%Y-%m-%d %H:%M:%S",time.gmtime(time.time()+28800))
         to_addr=["yf@ziwu.net","zspace@139.com","info+robot@yufu.org"]
         msg=EmailMessage()
         msg.set_content(txt)
@@ -97,7 +97,7 @@ class mailcmd:
         """
         Send message back
         """
-        ts=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime())
+        ts=time.strftime("%Y-%m-%d %H:%M:%S",time.gmtime(time.time()+28800))
         to_addr=["yf@ziwu.net","zspace@139.com","info+robot@yufu.org"]
         msg=EmailMessage()
         msg.set_content(txt)
