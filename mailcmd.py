@@ -18,7 +18,8 @@ class mailcmd:
         self.account = account
         self.password = password
         self.flag = ''
-    
+        self.to_addr=["yf@ziwu.net","zspace@139.com","info+robot@yufu.org"]
+
     def getcmd(self,flag="UNSEEN"):
         """
         Get command from mail
@@ -34,6 +35,7 @@ class mailcmd:
                 #print wrong!
                 print('mailbox login error: %s' % e)
                 M.close()
+                return sublist
     
             M.select()
 
@@ -43,7 +45,7 @@ class mailcmd:
             res, data = M.search(None, self.flag)
             for num in data[0].decode().split():
                 try:
-                    res, data = M.fetch(num, '(RFC822)')
+                    res, data = M.fetch(num, 'RFC822')
                     try:
                         msg=data[0][1].decode()
                     except:
@@ -58,7 +60,7 @@ class mailcmd:
                     sublist.append(str)
                 except Exception as e:
                     print( 'got msg error: %s' % e)            
-            ts=time.strftime("%Y-%m-%d %H:%M:%S",time.gmtime(time.time()+28800))
+            ts=mailcmd.time_bj()
             print( "%s get %d command from mail." %(ts, i))
             #for i in range(len(sublist)):
             #    print(i+1,sublist[i])
@@ -74,13 +76,12 @@ class mailcmd:
         """
         Send message back
         """
-        ts=time.strftime("%Y-%m-%d %H:%M:%S",time.gmtime(time.time()+28800))
-        to_addr=["yf@ziwu.net","zspace@139.com","info+robot@yufu.org"]
+        ts=mailcmd.time_bj()
         msg=EmailMessage()
         msg.set_content(txt)
-        msg['Subject']="Message from robot "+ts
+        msg['Subject']="Robot message "+ts
         msg['From']=self.account
-        msg['To']=",".join(to_addr)
+        msg['To']=",".join(self.to_addr)
  
         M = smtplib.SMTP_SSL(self.smtp_server,self.smtp_port)
         try:
@@ -97,14 +98,14 @@ class mailcmd:
         """
         Send message back
         """
-        ts=time.strftime("%Y-%m-%d %H:%M:%S",time.gmtime(time.time()+28800))
+        ts=mailcmd.time_bj()
         to_addr=["yf@ziwu.net","zspace@139.com","info+robot@yufu.org"]
         msg=EmailMessage()
         msg.set_content(txt)
 
-        msg['Subject']="Message from robot "+ts
+        msg['Subject']="Robot message "+ts
         msg['From']=self.account
-        msg['To']=",".join(to_addr)
+        msg['To']=",".join(self.to_addr)
         
         html1 = ('<html><head><style type="text/css">'
                 'table.gridtable{color:#333333;border-width:1px;border-style:solid;width:100%;'
@@ -133,6 +134,11 @@ class mailcmd:
             M.quit()
     
 
+    def time_bj():
+        ts=time.strftime("%Y-%m-%d %H:%M:%S",
+                time.gmtime(time.time()+28800))
+        return ts
+        
 if __name__ == "__main__":
 
 #    m = mailcmd('imap.gmail.com','993',
@@ -143,12 +149,13 @@ if __name__ == "__main__":
             'smtp.exmail.qq.com','465',
             'robot@ziwu.net','qdlzxkgk8G')
 
-    #cmd=m.getcmd()
-    cmd=m.getcmd('ALL')
+    cmd=m.getcmd()
+    #cmd=m.getcmd('ALL')
     if cmd:
         msg="Hello,你好\nI've got some command:\n\n"
         msg+='<ul><li>'+'</li><li>'.join(cmd)+'</li></ul>'
         msg+='\n\n PyRobot 正在全力运行...\n'
+        print(msg)
         #m.sendtext(msg)
-        m.sendhtml(msg)
+        #m.sendhtml(msg)
     print( "Done!" )
