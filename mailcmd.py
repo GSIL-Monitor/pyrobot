@@ -99,10 +99,8 @@ class mailcmd:
         Send message back
         """
         ts=mailcmd.time_bj()
-        to_addr=["yf@ziwu.net","zspace@139.com","info+robot@yufu.org"]
         msg=EmailMessage()
         msg.set_content(txt)
-
         msg['Subject']="Robot message "+ts
         msg['From']=self.account
         msg['To']=",".join(self.to_addr)
