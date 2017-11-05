@@ -29,37 +29,27 @@ class mailcmd:
         M = imaplib.IMAP4_SSL(self.imap_server,self.imap_port)
         sublist =[]
         try:
-            try:
-                M.login(self.account,self.password)
-            except Exception as e:
-                #print wrong!
-                print('mailbox login error: %s' % e)
-                M.close()
-                return sublist
+            M.login(self.account,self.password)
     
-            M.select()
-
             i=0
-    
+            M.select()
             # result, message = M.select()
             res, data = M.search(None, self.flag)
             for num in data[0].decode().split():
+                res, data = M.fetch(num, 'RFC822')
                 try:
-                    res, data = M.fetch(num, 'RFC822')
-                    try:
-                        msg=data[0][1].decode()
-                    except:
-                        msg=data[0][1].decode('gbk','ignore')
-                    msg = email.message_from_string(msg)
-                    i+=1
-                    sub=email.header.decode_header(msg['subject'])
-                    if sub[0][1]!=None:
-                        str=sub[0][0].decode(sub[0][1])
-                    else:
-                        str=sub[0][0]
-                    sublist.append(str)
-                except Exception as e:
-                    print( 'got msg error: %s' % e)            
+                    msg=data[0][1].decode()
+                except:
+                    msg=data[0][1].decode('gbk','ignore')
+                msg = email.message_from_string(msg)
+                i+=1
+                sub=email.header.decode_header(msg['subject'])
+                if sub[0][1]!=None:
+                    str=sub[0][0].decode(sub[0][1])
+                else:
+                    str=sub[0][0]
+                sublist.append(str)
+
             ts=mailcmd.time_bj()
             print( "%s get %d command from mail." %(ts, i))
             #for i in range(len(sublist)):
@@ -68,8 +58,8 @@ class mailcmd:
         except Exception as e:
             print( 'imap error: %s' % e)
             M.close()
-        return sublist
 
+        return sublist
     
 
     def sendtext(self,txt):
@@ -88,10 +78,10 @@ class mailcmd:
             M.login(self.account,self.password)
             M.send_message(msg)
             print( "%s send mail ok!" %(ts))
-            M.quit()
         except Exception as e:
             print( 'send mail error: %s' % e)
-            M.quit()
+
+        M.quit()
     
 
     def sendhtml(self,txt):
@@ -126,10 +116,10 @@ class mailcmd:
             M.login(self.account,self.password)
             M.send_message(msg)
             print( "%s send mail ok!" %(ts))
-            M.quit()
         except Exception as e:
             print( 'send mail error: %s' % e)
-            M.quit()
+            
+        M.quit()
     
 
     def time_bj():
