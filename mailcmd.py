@@ -26,38 +26,36 @@ class mailcmd:
         """
 
         self.flag = flag
-        M = imaplib.IMAP4_SSL(self.imap_server,self.imap_port)
         sublist =[]
         try:
-            M.login(self.account,self.password)
+            with imaplib.IMAP4_SSL(self.imap_server,self.imap_port) as M:
+                M.login(self.account,self.password)
     
-            i=0
-            M.select()
-            # result, message = M.select()
-            res, data = M.search(None, self.flag)
-            for num in data[0].decode().split():
-                res, data = M.fetch(num, 'RFC822')
-                try:
-                    msg=data[0][1].decode()
-                except:
-                    msg=data[0][1].decode('gbk','ignore')
-                msg = email.message_from_string(msg)
-                i+=1
-                sub=email.header.decode_header(msg['subject'])
-                if sub[0][1]!=None:
-                    str=sub[0][0].decode(sub[0][1])
-                else:
-                    str=sub[0][0]
-                sublist.append(str)
+                i=0
+                M.select()
+                # result, message = M.select()
+                res, data = M.search(None, self.flag)
+                for num in data[0].decode().split():
+                    res, data = M.fetch(num, 'RFC822')
+                    try:
+                        msg=data[0][1].decode()
+                    except:
+                        msg=data[0][1].decode('gbk','ignore')
+                    msg = email.message_from_string(msg)
+                    i+=1
+                    sub=email.header.decode_header(msg['subject'])
+                    if sub[0][1]!=None:
+                        str=sub[0][0].decode(sub[0][1])
+                    else:
+                        str=sub[0][0]
+                    sublist.append(str)
 
-            ts=mailcmd.time_bj()
-            print( "%s get %d command from mail." %(ts, i))
-            #for i in range(len(sublist)):
+                ts=mailcmd.time_bj()
+                print( "%s get %d command from mail." %(ts, i))
+                #for i in range(len(sublist)):
             #    print(i+1,sublist[i])
-            M.logout()
         except Exception as e:
             print( 'imap error: %s' % e)
-            M.close()
 
         return sublist
     
@@ -137,8 +135,8 @@ if __name__ == "__main__":
             'smtp.exmail.qq.com','465',
             'robot@ziwu.net','qdlzxkgk8G')
 
-    cmd=m.getcmd()
-    #cmd=m.getcmd('ALL')
+    #cmd=m.getcmd()
+    cmd=m.getcmd('ALL')
     if cmd:
         msg="Hello,你好\nI've got some command:\n\n"
         msg+='<ul><li>'+'</li><li>'.join(cmd)+'</li></ul>'
