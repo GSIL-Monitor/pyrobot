@@ -93,21 +93,21 @@ class mailcmd:
         msg['From']=self.account
         msg['To']=",".join(self.to_addr)
         
-        html1 = ('<html><head><style type="text/css">'
-                'table.gridtable{color:#333333;border-width:1px;border-style:solid;width:100%;'
-            'border-color:#666666;border-collapse:collapse;margin:0 auto}'
-            'table.gridtable th{color:#0000a0;font-size:14px;padding: 10px;background-color:#dedede;}'
-            'table.gridtable td{font-size:16px;text-align:left;padding:14px;background-color:#ffffff;}'
+        html_tpl = ('<html><head><style type="text/css">'
+                'table.gridtable{{color:#333333;border-width:1px;border-style:solid;width:100%;'
+            'border-color:#666666;border-collapse:collapse;margin:0 auto}}'
+            'table.gridtable th{{color:#0000a0;font-size:14px;padding: 10px;background-color:#dedede;}}'
+            'table.gridtable td{{font-size:16px;text-align:left;padding:14px;background-color:#ffffff;}}'
             '</style></head><body><center><div align="center";style="text-align:center;width:400px"><br><br>'
-            '<table class="gridtable"><tr><th>PyRobot Message</th></tr><tr><td>')
-
-        html2 = ('</td></tr></table><br>'
+            '<table class="gridtable"><tr><th>{msg_head}</th></tr><tr><td>'
+            '{msg_body}</td></tr></table><br>'
             '<div style="color:#00a0a0;font-family:arial;font-size:11px">PyRobot service powered by<br>'
             '<a style="text-decoration:none" href="http://www.yufu.org">yufu.org</a>&copy;2017'
             '</div></div></center></body></html>')
 
         txt=txt.replace('\n','<br>')
-        msg.add_alternative(html1+txt+html2 ,subtype="html")
+        html_msg=html_tpl.format(msg_head='PyRobot Message', msg_body=txt)
+        msg.add_alternative(html_msg ,subtype="html")
  
         M = smtplib.SMTP_SSL(self.smtp_server,self.smtp_port)
         try:
